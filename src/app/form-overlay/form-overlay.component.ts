@@ -11,30 +11,13 @@ export class FormOverlayComponent {
   latitude!: number;
   longitude!: number;
 
-  // @Output() addMarkerEvent = new EventEmitter<{ latitude: number, longitude: number }>();
   cordinateModel: MapModel = {
     latitude: 0,
     longitude: 0
   }
-  /**
-   *
-   */
   constructor(private mapService: MapServices) {
 
   }
-  // addMarker() {
-  //   // Validate latitude and longitude
-  //   if (this.isValidCoordinate(this.latitude) && this.isValidCoordinate(this.longitude)) {
-  //     this.addMarkerEvent.emit({ latitude: this.latitude, longitude: this.longitude });
-  //   } else {
-  //     alert('Please enter valid coordinates');
-  //   }
-  // }
-
-  // isValidCoordinate(coord: number): boolean {
-  //   // Simple validation for latitude and longitude
-  //   return !isNaN(coord) && coord >= -90 && coord <= 90;
-  // }
   addMarkers() {
     if (this.mapService.isValidCoordinate(this.latitude) && this.mapService.isValidCoordinate(this.longitude)) {
       this.cordinateModel.latitude = this.latitude;
@@ -43,5 +26,8 @@ export class FormOverlayComponent {
     } else {
       alert('Please enter valid coordinates');
     }
+  }
+  onClear(){
+    this.mapService.removeMarker();
   }
 }

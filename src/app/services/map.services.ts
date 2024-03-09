@@ -12,6 +12,7 @@ import Point from 'ol/geom/Point';
 import { Style, Icon } from 'ol/style';
 import { createInjectableType } from '@angular/compiler';
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -22,6 +23,7 @@ export class MapServices {
     tileLayer!: any;
     markerSource!: VectorSource;
     markerLayer!: VectorLayer<VectorSource>;
+    private markerAddedSubject = new Subject<{ map: Map }>();
 
     mapModel: MapModel = {
         latitude: 0,
@@ -49,7 +51,6 @@ export class MapServices {
                 })
             ])
         })
-        // return this.map;
     }
 
     initializeMarker(): Map {
@@ -62,8 +63,9 @@ export class MapServices {
     }
 
     addMarker(model: MapModel) {
+        console.log(model)
         const marker = new Feature({
-            geometry: new Point(fromLonLat([model.latitude, model.longitude]))
+            geometry: new Point(fromLonLat([model.longitude, model.latitude]))
         })
         marker.setStyle(new Style({
             image: new Icon({
@@ -73,10 +75,17 @@ export class MapServices {
         }));
 
         this.markerSource.addFeature(marker);
-    }
 
+        this.markerAddedSubject.next({ map: this.map });
+
+    }
+    removeMarker() {
+        this.markerSource.clear();
+    }
     isValidCoordinate(coord: number): boolean {
-        // Simple validation for latitude and longitude
         return !isNaN(coord) && coord >= -90 && coord <= 90;
+    }
+    get markerAdded$() {
+        return this.markerAddedSubject.asObservable();
     }
 }
